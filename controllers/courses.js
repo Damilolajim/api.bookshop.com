@@ -28,31 +28,53 @@ exports.createCourse = catchError(async (req, resp, next) => {
   });
 });
 
-// implement pagegation on this endpoint
 exports.getCourses = catchError(async (req, resp, next) => {
   let query = {};
+  let pagenation;
   const { id } = ensureObject(req.params);
   const queryParam = ensureObject(req.query);
+  let { count, page } = queryParam;
 
   if (id && !ObjectId.isValid(id))
     return next(new throwError("invalid course id", 400));
 
+  // Remove pagination parameters from query
   if (queryParam) {
     delete queryParam.page;
     delete queryParam.count;
     query = { ...query, ...queryParam };
   }
 
+  // Pagination defaults
+  count = Number(count) || 100;
+  page = Number(page) || 1;
+  const skip = (page - 1) * count;
+
   const rslt = id
     ? await connection.findOne({ _id: new ObjectId(id) })
-    : await connection.find(query).toArray();
+    : await connection.find(query).skip(skip).limit(count).toArray();
   const rsltCount = rslt?.length;
+
+  if (!rslt) return next(new throwError("course not found", 404));
+
+  if (!id) {
+    const totalCount = await connection.countDocuments(query);
+
+    pagenation = {
+      totalPages: Math.ceil(totalCount / count),
+      currentPage: page,
+      countPerPage: count,
+      hasPreviousPage: page > 1,
+      hasNextPage: page < this.totalPages,
+    };
+  }
 
   resp.status(200).json({
     success: true,
     message: `${rsltCount ? "courses" : "course"} fetched successfully`,
     count: rsltCount ? rsltCount : undefined,
     data: rslt,
+    pagenation,
   });
 });
 

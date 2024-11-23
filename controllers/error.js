@@ -17,7 +17,7 @@ const errorHandler = (err, req, resp, next) => {
 
 const sendDevelopmentError = (err, resp) => {
   resp.status(err.statusCode).json({
-    status: false,
+    success: false,
     message: err.message,
     error: err,
     stackTraceP: err.stack,
@@ -27,12 +27,12 @@ const sendDevelopmentError = (err, resp) => {
 const sendProductionError = (err, resp) => {
   if (!err.isOperational)
     return resp.status(500).json({
-      status: false,
+      success: false,
       message: "Something went wrong, please try again",
     });
 
   resp.status(err.statusCode).json({
-    status: false,
+    success: false,
     message: err.message,
   });
 };
