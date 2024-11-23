@@ -19,9 +19,12 @@ const {
 router
   .route("/")
   .get(getCourses)
-  .patch(cleanupData, validatSchema(updateCourseSchema), updateCourse)
   .post(cleanupData, validatSchema(courseSchema), createCourse);
 
-router.route("/:id").delete(deleteCourse);
+router
+  .route("/:id")
+  .get(getCourses)
+  .patch(cleanupData, validatSchema(updateCourseSchema), updateCourse)
+  .delete(deleteCourse);
 
 module.exports = router;
