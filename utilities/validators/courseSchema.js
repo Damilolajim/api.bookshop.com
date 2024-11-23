@@ -13,8 +13,8 @@ exports.courseSchema = Joi.object({
 });
 
 exports.updateCourseSchema = Joi.object({
-  subject: requiredSchema(NAME_SCHEMA),
-  location: requiredSchema(NAME_SCHEMA),
-  price: requiredSchema(NUMBER_SCHEMA),
-  spaces: requiredSchema(NUMBER_SCHEMA),
+  subject: NAME_SCHEMA,
+  location: NAME_SCHEMA,
+  price: NUMBER_SCHEMA,
+  spaces: NUMBER_SCHEMA,
 });
