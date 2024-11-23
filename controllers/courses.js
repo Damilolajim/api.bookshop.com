@@ -28,15 +28,24 @@ exports.createCourse = catchError(async (req, resp, next) => {
   });
 });
 
+// implement pagegation on this endpoint
 exports.getCourses = catchError(async (req, resp, next) => {
+  let query = {};
   const { id } = ensureObject(req.params);
+  const queryParam = ensureObject(req.query);
 
   if (id && !ObjectId.isValid(id))
     return next(new throwError("invalid course id", 400));
 
+  if (queryParam) {
+    delete queryParam.page;
+    delete queryParam.count;
+    query = { ...query, ...queryParam };
+  }
+
   const rslt = id
     ? await connection.findOne({ _id: new ObjectId(id) })
-    : await connection.find().toArray();
+    : await connection.find(query).toArray();
   const rsltCount = rslt?.length;
 
   resp.status(200).json({
@@ -72,7 +81,7 @@ exports.updateCourse = catchError(async (req, resp, next) => {
   );
 
   if (!rslt?.modifiedCount)
-    return next(new throwError("an error occured", 500));
+    return next(new throwError("invalid course ID", 400));
 
   resp.status(200).json({
     success: true,
@@ -87,8 +96,9 @@ exports.deleteCourse = catchError(async (req, resp, next) => {
     return next(new throwError("invalid course id", 400));
 
   const rslt = await connection.deleteOne({ _id: new ObjectId(id) });
+
   if (!rslt?.deletedCount)
-    return next(new throwError("incorrect course ID sent", 400));
+    return next(new throwError("invalid course ID", 400));
 
   resp.status(201).json({
     success: true,
