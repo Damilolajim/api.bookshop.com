@@ -17,7 +17,7 @@ const start = catchErr(async () => {
   await client
     .db("admin")
     .command({ ping: 1 })
-    .then(() => console.log("connection successfu;"));
+    .then(() => console.log("connection successful"));
 
   app.listen(process.env.PORT, () =>
     console.log(`Bookshop server listening on ${process.env.PORT}...`)

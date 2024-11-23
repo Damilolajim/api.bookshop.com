@@ -11,17 +11,4 @@ const client = new MongoClient(process.env.MONGO_URI, {
   },
 });
 
-(async () => {
-  try {
-    await client.connect();
-
-    await client
-      .db("admin")
-      .command({ ping: 1 })
-      .then(() => console.log("connection successfu;"));
-  } catch (err) {
-    console.dir(err);
-  }
-})();
-
 module.exports = client.db(DATABASE);
