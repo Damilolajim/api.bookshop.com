@@ -5,19 +5,19 @@ const validatSchema = require("../middlewares/joi");
 const cleanupData = require("../middlewares/cleanupData");
 
 const {
-  addCart,
-  updateCart,
-  getCart,
-  deletCart,
-  clearCart,
-} = require("../controllers/cart");
+  cartSchema,
+  cartsSchema,
+} = require("../utilities/validators/cartSchema");
+
+const { addCart, deletCart, getCart } = require("../controllers/cart");
 
 router
   .route("/")
   .get(getCart)
-  .patch(cleanupData, updateCart)
-  .post(cleanupData, addCart)
-  .delete(clearCart);
+  .post(cleanupData, validatSchema(cartSchema), addCart)
+  .delete(deletCart);
+
+router.route("/all").post(cleanupData, validatSchema(cartsSchema), addCart);
 
 router.route("/:id").delete(deletCart);
 
