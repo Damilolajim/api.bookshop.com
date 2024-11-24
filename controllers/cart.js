@@ -4,66 +4,56 @@ const connection = client.collection("cart");
 const catchError = require("../utilities/catchError");
 const throwError = require("../utilities/throwError");
 const { ensureObject } = require("../utilities/helper");
+const { ObjectId } = require("mongodb");
 
+/**
+ * ensure course id is unique
+ */
 exports.addCart = catchError(async (req, resp, next) => {
   const requestData = ensureObject(req.body);
-  const rslt = await connection.insertOne(requestData);
-
-  if (rslt.modifiedCount) return next(new throwError("an error occured", 500));
+  const rslt = !Array.isArray(requestData)
+    ? await connection.insertOne(requestData)
+    : await connection.insertMany(requestData);
 
   resp.status(201).json({
     success: true,
     message: "cart added successfully",
+    data: {
+      cart_ids: requestData?.length
+        ? rslt.insertedIds.map((id) => id.toString())
+        : rslt.insertedId,
+    },
   });
 });
 
 exports.getCart = catchError(async (req, resp, next) => {
-  const requestData = ensureObject(req.query);
-  const rslt = await connection.findOne({ email: requestData.email });
-
-  if (!rslt) return next(new throwError("invalid email address", 404));
+  const rslt = await connection.find().toArray();
 
   resp.status(201).json({
     success: true,
     message: "cart added successfully",
+    count: rslt.length,
     data: rslt,
   });
 });
 
-exports.updateCart = catchError(async (req, resp, next) => {
-  const requestData = ensureObject(req.query);
-  const rslt = await connection.findOne({ email: requestData.email });
-
-  if (!rslt) return next(new throwError("invalid email address", 404));
-
-  resp.status(201).json({
-    success: true,
-    message: "cart added successfully",
-    data: rslt,
-  });
-});
-
+/**
+ * delete by course id
+ */
 exports.deletCart = catchError(async (req, resp, next) => {
   const { id } = ensureObject(req.params);
-  const rslt = await connection.deleOne({ _id: new ObjectId(id) });
 
-  if (!rslt?.modifiedCount)
-    return next(new throwError("invalid email address", 404));
+  if (id || !ObjectId.isValid(id))
+    return next(new throwError("invalid cart ID", 400));
 
-  resp.status(201).json({
-    success: true,
-    message: "cart deleted successfully",
-  });
-});
+  const rslt = id
+    ? await connection.deleteOne({ _id: new ObjectId(id) })
+    : await connection.deleteMany();
 
-exports.clearCart = catchError(async (req, resp, next) => {
-  const rslt = await connection.delete();
-
-  if (!rslt?.modifiedCount)
-    return next(new throwError("invalid email address", 404));
+  if (!rslt?.deletedCount) return next(new throwError("invalid cart ID", 400));
 
   resp.status(201).json({
     success: true,
-    message: "cart cleared successfully",
+    message: `${id ? "cart item" : "carts"} deleted successfully`,
   });
 });

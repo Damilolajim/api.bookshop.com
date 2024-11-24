@@ -38,7 +38,7 @@ app.use((req, res, next) => {
 // Endpoints
 app.get("/", (req, res) => res.send("Betuptip connected"));
 app.use("/v1/courses", courseRoutes);
-app.use("/v1/cart", cartRoutes);
+app.use("/v1/carts", cartRoutes);
 
 // Handle undefined routes
 app.all("*", (req, res, next) => {

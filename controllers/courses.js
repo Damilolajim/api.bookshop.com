@@ -28,6 +28,7 @@ exports.createCourse = catchError(async (req, resp, next) => {
   });
 });
 
+// add sorting to this endpoint
 exports.getCourses = catchError(async (req, resp, next) => {
   let query = {};
   let pagenation;
