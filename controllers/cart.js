@@ -9,8 +9,8 @@ const { ObjectId } = require("mongodb");
 
 exports.addCart = catchError(async (req, resp, next) => {
   let rslt;
-  const { course_id, quantity } = requestData;
   const requestData = ensureObject(req.body);
+  const { course_id, quantity } = requestData;
 
   if (!course_id || !ObjectId.isValid(course_id))
     return next(new throwError("invalid course id", 400));
