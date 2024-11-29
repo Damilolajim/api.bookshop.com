@@ -6,7 +6,7 @@ const cleanupData = require("../middlewares/cleanupData");
 
 const {
   cartSchema,
-  cartsSchema,
+  checkoutSchema,
 } = require("../utilities/validators/cartSchema");
 
 const {
@@ -14,6 +14,7 @@ const {
   deleteCart,
   getCarts,
   getCart,
+  checkout,
 } = require("../controllers/cart");
 
 router
@@ -22,7 +23,9 @@ router
   .post(cleanupData, validatSchema(cartSchema), addCart)
   .delete(deleteCart);
 
-router.route("/all").post(cleanupData, validatSchema(cartsSchema), addCart);
+router
+  .route("/checkout")
+  .post(cleanupData, validatSchema(checkoutSchema), checkout);
 
 router.route("/:id").get(getCart).delete(deleteCart);
 

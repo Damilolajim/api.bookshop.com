@@ -1,5 +1,6 @@
 const client = require("../config/db");
 const connection = client.collection("cart");
+const checkout = client.collection("checkout");
 const courses = client.collection("courses");
 
 const catchError = require("../utilities/catchError");
@@ -99,6 +100,51 @@ exports.getCarts = catchError(async (req, resp, next) => {
     totalCartValue,
     data: enrichedCart,
   });
+});
+
+exports.checkout = catchError(async (req, resp, next) => {
+  const { name, email, carts } = ensureObject(req.body);
+
+  if (
+    !name ||
+    !email ||
+    !carts ||
+    !Array.isArray(carts) ||
+    carts.length === 0
+  ) {
+    return resp.status(400).json({
+      success: false,
+      message: "Invalid request. Name, email, and carts are required.",
+    });
+  }
+
+  try {
+    const newOrder = await checkout.insertOne({
+      name,
+      email,
+      carts: carts.map((cart) => ({
+        course_id: new ObjectId(cart.course_id),
+        quantity: cart.quantity,
+      })),
+      createdAt: new Date(),
+    });
+
+    await connection.deleteMany({});
+
+    resp.status(200).json({
+      success: true,
+      message: "Checkout successful",
+      orderId: newOrder.insertedId,
+    });
+  } catch (error) {
+    console.error("Error during checkout:", error);
+
+    resp.status(500).json({
+      success: false,
+      message: "An error occurred during checkout.",
+      error: error.message,
+    });
+  }
 });
 
 exports.getCart = catchError(async (req, resp, next) => {
