@@ -6,9 +6,10 @@ const { rateLimit } = require("express-rate-limit");
 const cors = require("cors");
 const xss = require("xss-clean");
 const mongoSanitize = require("express-mongo-sanitize");
+const app = express();
+
 const throwError = require("./utilities/throwError");
 const errorHandler = require("./controllers/error");
-const app = express();
 
 const cartRoutes = require("./routes/cart");
 const courseRoutes = require("./routes/courses");

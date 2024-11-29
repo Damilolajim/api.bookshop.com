@@ -9,16 +9,21 @@ const {
   cartsSchema,
 } = require("../utilities/validators/cartSchema");
 
-const { addCart, deletCart, getCart } = require("../controllers/cart");
+const {
+  addCart,
+  deleteCart,
+  getCarts,
+  getCart,
+} = require("../controllers/cart");
 
 router
   .route("/")
-  .get(getCart)
+  .get(getCarts)
   .post(cleanupData, validatSchema(cartSchema), addCart)
-  .delete(deletCart);
+  .delete(deleteCart);
 
 router.route("/all").post(cleanupData, validatSchema(cartsSchema), addCart);
 
-router.route("/:id").delete(deletCart);
+router.route("/:id").get(getCart).delete(deleteCart);
 
 module.exports = router;
