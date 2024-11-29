@@ -28,21 +28,20 @@ exports.createCourse = catchError(async (req, resp, next) => {
   });
 });
 
-// add sorting to this endpoint
 exports.getCourses = catchError(async (req, resp, next) => {
   let query = {};
   let pagenation;
   const { id } = ensureObject(req.params);
   const queryParam = ensureObject(req.query);
-  let { count, page } = queryParam;
+  let { count, page, sort, order } = queryParam;
 
   if (id && !ObjectId.isValid(id))
     return next(new throwError("invalid course id", 400));
 
-  // Remove pagination parameters from query
+  // Remove pagination and sorting parameters from query
   if (queryParam) {
-    delete queryParam.page;
-    delete queryParam.count;
+    ["page", "count", "sort", "order"].forEach((key) => delete queryParam[key]);
+
     query = { ...query, ...queryParam };
   }
 
@@ -51,9 +50,19 @@ exports.getCourses = catchError(async (req, resp, next) => {
   page = Number(page) || 1;
   const skip = (page - 1) * count;
 
+  // Sorting defaults
+  sort = sort || "createdAt";
+  order = order === "asc" || !order ? 1 : -1;
+
   const rslt = id
     ? await connection.findOne({ _id: new ObjectId(id) })
-    : await connection.find(query).skip(skip).limit(count).toArray();
+    : await connection
+        .find(query)
+        .sort({ [sort]: order })
+        .skip(skip)
+        .limit(count)
+        .toArray();
+
   const rsltCount = rslt?.length;
 
   if (!rslt) return next(new throwError("course not found", 404));
@@ -66,7 +75,7 @@ exports.getCourses = catchError(async (req, resp, next) => {
       currentPage: page,
       countPerPage: count,
       hasPreviousPage: page > 1,
-      hasNextPage: page < this.totalPages,
+      hasNextPage: page < Math.ceil(totalCount / count),
     };
   }
 
