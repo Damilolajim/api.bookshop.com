@@ -7,12 +7,10 @@ const throwError = require("../utilities/throwError");
 const { ensureObject } = require("../utilities/helper");
 const { ObjectId } = require("mongodb");
 
-/**
- * ensure course id is unique
- */
 exports.addCart = catchError(async (req, resp, next) => {
-  const requestData = ensureObject(req.body);
+  let rslt;
   const { course_id, quantity } = requestData;
+  const requestData = ensureObject(req.body);
 
   if (!course_id || !ObjectId.isValid(course_id))
     return next(new throwError("invalid course id", 400));
@@ -35,8 +33,6 @@ exports.addCart = catchError(async (req, resp, next) => {
   const existingCartItem = await connection.findOne({
     course_id: requestData.course_id,
   });
-
-  let rslt;
 
   if (existingCartItem) {
     rslt = await connection.updateOne(
