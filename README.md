@@ -60,5 +60,5 @@ api.bookshop.com/
 1. Run `npm install` to install the Node.js dependencies
 2. From the root `/api.bookshop.com` directory, run `npm run dev` to run the development version of the project
 3. From the root `/api.bookshop.com` directory, run `npm start` to run the production version
-4. import
+4. import the postman collections in `/config/Bookshop.postman_collection.json`
 5. Open `http://localhost:8000/` in your postman.
