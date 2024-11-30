@@ -12,7 +12,7 @@ My default branch is for development of the frontend vue project `api.bookshop.c
 
 Here are the link to some userful URL's:
 
-- link to my [github repository](https://github.com/Damilolajim/bookshop.com.git)
+- link to my [github repository](https://github.com/Damilolajim/api.bookshop.com.git)
 - link to my [render.com endpoint collections](https://api-bookshop-com.onrender.com/v1)
 
 ## What's included
