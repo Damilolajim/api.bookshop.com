@@ -23,7 +23,8 @@ Within the [download](https://github.com/Damilolajim/api.bookshop.com/archive/re
   <summary>Download contents</summary>
 
 ```text
-bookshop.com/
+
+api.bookshop.com/
 ├── config/
 │   ├── db.js
 │   └── config.env
@@ -49,6 +50,7 @@ bookshop.com/
 ├── package.json
 ├── README.me
 └── server.js
+
 ```
 
 </details>
