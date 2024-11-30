@@ -20,7 +20,7 @@ Here are the link to some userful URL's:
 Within the [download](https://github.com/Damilolajim/api.bookshop.com/archive/refs/heads/main.zip) you'll find the following directories and files, logically grouping common assets and providing both compiled and minified variations.
 
 <details>
-  <summary>Download contents</summary>
+  <summary>Project Structure</summary>
 
 ```text
 
